@@ -15,10 +15,10 @@
           <th scope="row">{{ todo.id }}</th>
           <td>{{ todo.title }}</td>
           <td>{{ todo.userId }}</td>
-          <td>{{ todo.completed }}</td>
+          <td>{{ todo.completedText }}</td>
           <td>
             <button
-              @click="editTodo(todo.id)"
+              @click="editTodo(todo.id, todo.title, todo.completed)"
               type="button"
               class="btn btn-primary btn-sm px-3 m-2"
               data-mdb-toggle="modal"
@@ -34,74 +34,82 @@
               <i class="fas fa-times"></i>
             </button>
           </td>
+        </tr>
+      </tbody>
+    </table>
 
-          <!-- Modal -->
-          <div
-            class="modal fade"
-            id="editModal"
-            tabindex="-1"
-            aria-labelledby="exampleModalLabel"
-            aria-hidden="true"
-          >
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">Todo Edit</h5>
-                  <button
-                    type="button"
-                    class="btn-close"
-                    data-mdb-dismiss="modal"
-                    aria-label="Close"
-                  ></button>
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="editModal"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Todo Edit</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-mdb-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="container">
+                <div class="form-outline">
+                  <input
+                    type="text"
+                    id="newTitle"
+                    class="form-control"
+                    v-model="newTitle"
+                  />
+                  <label class="form-label" for="newTitle"
+                    >Input New Title
+                  </label>
                 </div>
-                <div class="modal-body">
-                  <div class="row">
-                    <div class="container">
-                      <div class="form-outline">
-                        <input type="text" id="newTitle" class="form-control" />
-                        <label class="form-label" for="newTitle"
-                          >Input New Title
-                        </label>
-                      </div>
-                      <hr />
-                      <!-- Default checkbox -->
-                      <div class="form-check">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="flexCheckDefault"
-                        />
-                        <label class="form-check-label" for="flexCheckDefault">
-                          Completed
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="modal-footer">
-                  <button
-                    type="button"
-                    class="btn btn-danger"
-                    data-mdb-dismiss="modal"
-                  >
-                    Close
-                  </button>
-                  <button
-                    @click="confirmEdit(this.newTitle)"
-                    type="button"
-                    class="btn btn-success"
-                  >
-                    Save changes
-                  </button>
+                <hr />
+                <!-- Default checkbox -->
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="isCompleted"
+                    v-model="newStatus"
+                  />
+                  <label class="form-check-label" for="isCompleted">
+                    Completed
+                  </label>
                 </div>
               </div>
             </div>
           </div>
-        </tr>
-      </tbody>
-    </table>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-danger"
+              data-mdb-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              @click="confirmEdit(currentID, newTitle, newStatus)"
+              type="button"
+              class="btn btn-success"
+              data-mdb-dismiss="modal"
+            >
+              Save changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal -->
+
     <div class="d-flex justify-content-center">
       <nav>
         <ul class="pagination">
@@ -139,10 +147,13 @@ export default {
     return {
       todos: [],
       newTitle: "",
+      newStatus: null,
+      currentID: null,
     };
   },
   async created() {
     await this.getData();
+    console.log(this.todos);
   },
   methods: {
     getData() {
@@ -160,9 +171,9 @@ export default {
               let todo = todos[t];
 
               if (todo.completed === false) {
-                todo.completed = "In Progress";
+                todo.completedText = "In Progress";
               } else if (todo.completed === true) {
-                todo.completed = "Done";
+                todo.completedText = "Done";
               }
 
               for (const u in users) {
@@ -193,21 +204,40 @@ export default {
         });
     },
 
-    editTodo(todoID) {
-      // let text = this.newTitle;
-
-      // this.confirmEdit(text);
-
-      console.log(todoID);
-
+    editTodo(todoID, title, status) {
+      this.currentID = todoID;
+      this.newTitle = title;
+      this.newStatus = status;
+      // status = () => {
+      //   if (status == false) {
+      //     return "In Progress";
+      //   } else if (status == true) {
+      //     return "Done";
+      //   } else {
+      //     return "Boş";
+      //   }
+      // };
+    },
+    confirmEdit(todoID, newTitle, newStatus) {
       axios
         .patch("https://jsonplaceholder.typicode.com/todos/" + todoID)
-        .then(() => {});
-    },
-    confirmEdit(text) {
-      console.log(text);
+        .then(() => {
+          for (var i in this.todos) {
+            var todo = this.todos[i];
+            if (todo.id == todoID) {
+              todo.title = newTitle;
+
+              if (newStatus === false) {
+                todo.completedText = "In Progress";
+              } else if (newStatus === true) {
+                todo.completedText = "Done";
+              }
+            }
+          }
+        });
     },
   },
+  computed: {},
 };
 </script>
 
