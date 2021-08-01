@@ -11,7 +11,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(todo, index) in todos.slice(0, 10)" :key="index">
+        <tr v-for="(todo, index) in todos" :key="index">
           <th scope="row">{{ todo.id }}</th>
           <td>{{ todo.title }}</td>
           <td>{{ todo.userId }}</td>
@@ -149,11 +149,18 @@ export default {
       newTitle: "",
       newStatus: null,
       currentID: null,
+      pagination: {
+        firstPage: 0,
+        currentPage: 0,
+        totalPage: null,
+        perPage: null,
+      },
     };
   },
   async created() {
     await this.getData();
-    console.log(this.todos);
+
+    this.navigatePage();
   },
   methods: {
     getData() {
@@ -196,7 +203,7 @@ export default {
         .then(() => {
           for (let i in this.todos) {
             var todo = this.todos[i];
-            console.log(todo.id);
+
             if (todo.id == todoID) {
               this.todos.splice(i, 1);
             }
@@ -235,6 +242,12 @@ export default {
             }
           }
         });
+    },
+    navigatePage() {
+      console.log(this.todos);
+      // for (var i in this.todos) {
+      //   console.log(this.todos[i]);
+      // }
     },
   },
   computed: {},
