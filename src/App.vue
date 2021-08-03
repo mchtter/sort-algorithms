@@ -6,7 +6,8 @@
           <th scope="col">#</th>
           <th scope="col">Title</th>
           <th scope="col">Assignee</th>
-          <th scope="col">Status</th>
+          <th scope="col">Status <a href="#" @click="sortStatus()">{{sortIcon}}</a>
+          </th>
           <th scope="col">Actions</th>
         </tr>
       </thead>
@@ -163,7 +164,8 @@ export default {
         pages: [],
         currentPage: 0,
       },
-      isActive: 'active'
+      isSorted: 0,
+      sortIcon: "▼"
     };
   },
   async created() {
@@ -273,6 +275,20 @@ export default {
         this.pagination.currentPage = value
       }
     },
+
+    sortStatus() {
+      if (this.isSorted == 0) {
+        this.todos.sort((a, b) => a.completed > b.completed ? 1 : -1) 
+        this.isSorted = 1
+        this.sortIcon = "▲"
+      } else if ( this.isSorted == 1) {
+        this.todos.sort((a, b) => a.completed > b.completed ? -1 : 1) 
+        this.isSorted = 0
+        this.sortIcon = "▼"
+
+      }
+
+    }
   },
   computed: {},
 };
@@ -286,5 +302,8 @@ export default {
 
   color: #2c3e50;
   margin-top: 60px;
+}
+.table>thead tr {
+  // display: flex;
 }
 </style>
