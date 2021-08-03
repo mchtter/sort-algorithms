@@ -11,7 +11,13 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(todo, index) in todos" :key="index">
+        <tr
+          v-for="(todo, index) in todos.slice(
+            pagination.firstValue,
+            pagination.lastValue
+          )"
+          :key="index"
+        >
           <th scope="row">{{ todo.id }}</th>
           <td>{{ todo.title }}</td>
           <td>{{ todo.userId }}</td>
@@ -113,24 +119,24 @@
     <div class="d-flex justify-content-center">
       <nav>
         <ul class="pagination">
-          <li class="page-item disabled">
-            <span class="page-link">Previous</span>
+          <li class="page-item">
+            <a @click="navigatePage('prev')" class="page-link" href="#"
+              >Previous</a
+            >
+          </li>
+
+          <li
+            class="page-item"
+            v-for="(page, index) in pagination.pages"
+            :key="index"
+          >
+            <a @click="navigatePage(index)" class="page-link" href="#">{{
+              page
+            }}</a>
           </li>
 
           <li class="page-item">
-            <a class="page-link" href="#">1</a>
-          </li>
-
-          <li class="page-item active">
-            <a class="page-link"> 2 </a>
-          </li>
-
-          <li class="page-item">
-            <a class="page-link" href="#">3</a>
-          </li>
-
-          <li class="page-item">
-            <a class="page-link" href="#">Next</a>
+            <a @click="navigatePage('next')" class="page-link" href="#">Next</a>
           </li>
         </ul>
       </nav>
@@ -150,17 +156,15 @@ export default {
       newStatus: null,
       currentID: null,
       pagination: {
-        firstPage: 0,
-        currentPage: 0,
+        firstValue: 0,
+        lastValue: 10,
         totalPage: null,
-        perPage: null,
+        pages: [],
       },
     };
   },
   async created() {
-    await this.getData();
-
-    this.navigatePage();
+    this.getData();
   },
   methods: {
     getData() {
@@ -173,6 +177,8 @@ export default {
           (axios.spread = (response) => {
             var todos = response[0].data;
             var users = response[1].data;
+            // console.log(todos);
+            // console.log(users);
 
             for (const t in todos) {
               let todo = todos[t];
@@ -193,6 +199,7 @@ export default {
 
               this.todos.push(todo);
             }
+            this.calculatePagination();
           })
         );
     },
@@ -243,8 +250,33 @@ export default {
           }
         });
     },
-    navigatePage() {
-      console.log(this.todos);
+    calculatePagination() {
+      var totalPage = this.todos.length;
+      this.totalPage = totalPage;
+      var perPage = 10;
+      var numberOfPages = totalPage / perPage;
+      for (var i = 1; i <= numberOfPages; i++) {
+        this.pagination.pages.push(i);
+      }
+      console.log(numberOfPages);
+      console.log(this.pagination.pages);
+    },
+    navigatePage(value) {
+      // console.log(value);
+
+      if (value == "next") {
+        if (this.pagination.lastValue != this.totalPage) {
+          this.pagination.firstValue += 10;
+          this.pagination.lastValue += 10;
+        }
+      } else if (value == "prev") {
+        if (this.pagination.firstValue != 0) {
+          this.pagination.firstValue -= 10;
+          this.pagination.lastValue -= 10;
+        }
+      } else {
+        console.log(value);
+      }
       // for (var i in this.todos) {
       //   console.log(this.todos[i]);
       // }
