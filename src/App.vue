@@ -126,9 +126,10 @@
           </li>
 
           <li
-            class="page-item"
             v-for="(page, index) in pagination.pages"
             :key="index"
+            :class="['page-item', { 'active' : index === pagination.currentPage }]"
+
           >
             <a @click="navigatePage(index)" class="page-link" href="#">{{
               page
@@ -160,7 +161,9 @@ export default {
         lastValue: 10,
         totalPage: null,
         pages: [],
+        currentPage: 0,
       },
+      isActive: 'active'
     };
   },
   async created() {
@@ -268,18 +271,21 @@ export default {
         if (this.pagination.lastValue != this.totalPage) {
           this.pagination.firstValue += 10;
           this.pagination.lastValue += 10;
+          this.pagination.currentPage += 1
         }
       } else if (value == "prev") {
         if (this.pagination.firstValue != 0) {
           this.pagination.firstValue -= 10;
           this.pagination.lastValue -= 10;
+          this.pagination.currentPage -= 1
         }
       } else {
-        console.log(value);
+        console.log(value)
+        this.pagination.firstValue = 10 * value
+        this.pagination.lastValue = (10 * value) + 10
+        this.pagination.currentPage = value
+
       }
-      // for (var i in this.todos) {
-      //   console.log(this.todos[i]);
-      // }
     },
   },
   computed: {},
