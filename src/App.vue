@@ -6,7 +6,8 @@
           <th scope="col">#</th>
           <th scope="col">Title</th>
           <th scope="col">Assignee</th>
-          <th scope="col">Status <a href="#" @click="sortStatus()">{{sortIcon}}</a>
+          <th scope="col">
+            Status <a href="#" @click="sortStatus()">{{ sortIcon }}</a>
           </th>
           <th scope="col">Actions</th>
         </tr>
@@ -129,8 +130,7 @@
           <li
             v-for="(page, index) in pagination.pages"
             :key="index"
-            :class="['page-item', { 'active' : index === pagination.currentPage }]"
-
+            :class="['page-item', { 'active': index === pagination.currentPage }]"
           >
             <a @click="navigatePage(index)" class="page-link" href="#">{{
               page
@@ -165,7 +165,7 @@ export default {
         currentPage: 0,
       },
       isSorted: 0,
-      sortIcon: "▼"
+      sortIcon: "▼",
     };
   },
   async created() {
@@ -261,34 +261,32 @@ export default {
         if (this.pagination.lastValue != this.totalPage) {
           this.pagination.firstValue += 10;
           this.pagination.lastValue += 10;
-          this.pagination.currentPage += 1
+          this.pagination.currentPage += 1;
         }
       } else if (value == "prev") {
         if (this.pagination.firstValue != 0) {
           this.pagination.firstValue -= 10;
           this.pagination.lastValue -= 10;
-          this.pagination.currentPage -= 1
+          this.pagination.currentPage -= 1;
         }
       } else {
-        this.pagination.firstValue = 10 * value
-        this.pagination.lastValue = (10 * value) + 10
-        this.pagination.currentPage = value
+        this.pagination.firstValue = 10 * value;
+        this.pagination.lastValue = 10 * value + 10;
+        this.pagination.currentPage = value;
       }
     },
 
     sortStatus() {
       if (this.isSorted == 0) {
-        this.todos.sort((a, b) => a.completed > b.completed ? 1 : -1) 
-        this.isSorted = 1
-        this.sortIcon = "▲"
-      } else if ( this.isSorted == 1) {
-        this.todos.sort((a, b) => a.completed > b.completed ? -1 : 1) 
-        this.isSorted = 0
-        this.sortIcon = "▼"
-
+        this.todos.sort((a, b) => (a.completed > b.completed ? 1 : -1));
+        this.isSorted = 1;
+        this.sortIcon = "▲";
+      } else if (this.isSorted == 1) {
+        this.todos.sort((a, b) => (a.completed > b.completed ? -1 : 1));
+        this.isSorted = 0;
+        this.sortIcon = "▼";
       }
-
-    }
+    },
   },
   computed: {},
 };
