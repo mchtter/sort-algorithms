@@ -180,8 +180,6 @@ export default {
           (axios.spread = (response) => {
             var todos = response[0].data;
             var users = response[1].data;
-            // console.log(todos);
-            // console.log(users);
 
             for (const t in todos) {
               let todo = todos[t];
@@ -225,16 +223,8 @@ export default {
       this.currentID = todoID;
       this.newTitle = title;
       this.newStatus = status;
-      // status = () => {
-      //   if (status == false) {
-      //     return "In Progress";
-      //   } else if (status == true) {
-      //     return "Done";
-      //   } else {
-      //     return "Boş";
-      //   }
-      // };
     },
+
     confirmEdit(todoID, newTitle, newStatus) {
       axios
         .patch("https://jsonplaceholder.typicode.com/todos/" + todoID)
@@ -253,6 +243,7 @@ export default {
           }
         });
     },
+
     calculatePagination() {
       var totalPage = this.todos.length;
       this.totalPage = totalPage;
@@ -261,12 +252,9 @@ export default {
       for (var i = 1; i <= numberOfPages; i++) {
         this.pagination.pages.push(i);
       }
-      console.log(numberOfPages);
-      console.log(this.pagination.pages);
     },
-    navigatePage(value) {
-      // console.log(value);
 
+    navigatePage(value) {
       if (value == "next") {
         if (this.pagination.lastValue != this.totalPage) {
           this.pagination.firstValue += 10;
@@ -280,11 +268,9 @@ export default {
           this.pagination.currentPage -= 1
         }
       } else {
-        console.log(value)
         this.pagination.firstValue = 10 * value
         this.pagination.lastValue = (10 * value) + 10
         this.pagination.currentPage = value
-
       }
     },
   },
