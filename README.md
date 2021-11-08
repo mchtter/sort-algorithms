@@ -1,6 +1,5 @@
-# Related Digital Project
+# Frontend Project
 
-Related Digital Frontend;
 
 -Data Table,
 
